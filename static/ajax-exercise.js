@@ -34,7 +34,38 @@ document.querySelector('#weather-form').addEventListener('submit', showWeather);
 function orderMelons(evt) {
   evt.preventDefault();
 
-  // TODO: show the result message after your form
-  // TODO: if the result code is ERROR, make it show up in red (see our CSS!)
+  const formInputs = {
+    melon_type: document.querySelector('#melon-type-field').value,
+    qty: document.querySelector('#qty-field').value,
+  };
+
+  fetch('/order-melons.json', {
+    method: "POST",
+    body: JSON.stringify(formInputs),
+    headers: {
+      'Content-Type' : 'application/json',
+    },
+  })
+    .then(response => response.json())
+    .then(responseJson => {
+      if (responseJson.code === 'ERROR') {
+        document.querySelector('#order-status').classList.add('order-error')
+        document.querySelector('#order-status').innerHTML = `<p>${responseJson.msg}<p>`;
+      } else {
+        document.querySelector('#order-status').innerHTML = `<p>${responseJson.msg}<p>`;
+      }
+    });
 }
 document.querySelector('#order-form').addEventListener('submit', orderMelons);
+
+// FURTHER STUDY
+document.querySelector("#get-dog-image").addEventListener('click', () => {
+fetch('https://dog.ceo/api/breeds/image/random')
+ .then(response => response.json())
+  .then(result => {
+    const image = result.message;
+    document
+    .querySelector('#dog-image')
+    .insertAdjacentHTML('beforeend', `<div><img src=${image}></div>`);
+  });
+});
